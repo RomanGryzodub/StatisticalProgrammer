@@ -1,0 +1,416 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Statistical Programming in Clinical Trials</title>
+	<atom:link href="https://RomanGryzodub.github.io/StatisticalProgrammer/feed/" rel="self" type="application/rss+xml" />
+	<link>https://RomanGryzodub.github.io/StatisticalProgrammer</link>
+	<description></description>
+	<lastBuildDate>Sat, 13 May 2023 17:23:00 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=6.2</generator>
+	<item>
+		<title>PROC TRANSPOSE</title>
+		<link>https://RomanGryzodub.github.io/StatisticalProgrammer/proc-transpose/</link>
+					<comments>https://RomanGryzodub.github.io/StatisticalProgrammer/proc-transpose/#respond</comments>
+		
+		<dc:creator><![CDATA[statprog]]></dc:creator>
+		<pubDate>Sat, 13 May 2023 16:36:27 +0000</pubDate>
+				<category><![CDATA[SAS]]></category>
+		<guid isPermaLink="false">https://RomanGryzodub.github.io/StatisticalProgrammer/?p=71</guid>
+
+					<description><![CDATA[The code calculates and displays the average systolic blood pressure for each combination of sex and smoking status in a transposed format, accounting for missing values in the smoking status variable. SummaryThe code performs the following tasks:Create a&#8230;]]></description>
+										<content:encoded><![CDATA[
+<h2 class="wp-block-heading">The code calculates and displays the average systolic blood pressure for each combination of sex and smoking status in a transposed format, accounting for missing values in the smoking status variable.</h2>
+
+
+
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+
+
+
+<pre><span class="sas-comment" style="background-color: white; box-sizing: border-box; color: #5c6370; font-style: italic;"><h3 style="box-sizing: border-box; color: #212529; font-family: system-ui; font-size: 1.75rem; font-style: normal; font-weight: 500; line-height: 1.2; margin-bottom: 0.5rem; margin-top: 0px; white-space: normal;">Summary</h3><p style="box-sizing: border-box; color: #666666; font-family: system-ui; font-size: 16px; font-style: normal; line-height: 1.8; margin: 0px 0px 1rem; padding: 0px; white-space: normal;">The code performs the following tasks:</p><ol style="box-sizing: border-box; color: #212529; font-family: system-ui; font-size: 16px; font-style: normal; margin-bottom: 1rem; margin-top: 0px; padding-left: 2rem; white-space: normal;"><li style="box-sizing: border-box; line-height: 1.8; margin: 0px; padding: 0px;">Create a new dataset (heart_data) using the sashelp.heart dataset. In this step, it also creates a new variable called 'Smoking_Status_Group'. If the 'Smoking_Status' value is missing, the 'Unknown' category is assigned to the 'Smoking_Status_Group' variable. Otherwise, the original value is kept.</li><li style="box-sizing: border-box; line-height: 1.8; margin: 0px; padding: 0px;">Use PROC SUMMARY to calculate the average systolic blood pressure ('Systolic') by 'Sex' and 'Smoking_Status_Group'. The output dataset, avg_sbp, contains the mean systolic blood pressure for each combination of 'Sex' and 'Smoking_Status_Group'.</li><li style="box-sizing: border-box; line-height: 1.8; margin: 0px; padding: 0px;">Sort the avg_sbp dataset by 'Sex' and 'Smoking_Status_Group' to prepare it for the transposition step.</li><li style="box-sizing: border-box; line-height: 1.8; margin: 0px; padding: 0px;">Use PROC TRANSPOSE to transpose the avg_sbp dataset, pivoting on the 'Smoking_Status_Group' variable. This creates a new dataset called transposed_sbp, where each unique value of 'Smoking_Status_Group' becomes a new variable, and the corresponding 'Avg_Systolic' values fill in the dataset.</li><li style="box-sizing: border-box; line-height: 1.8; margin: 0px; padding: 0px;">Print the transposed_sbp dataset using PROC PRINT to display the results. The output shows the average systolic blood pressure for each combination of 'Sex' and 'Smoking_Status_Group' in a transposed format.</li></ol><p style="box-sizing: border-box; color: #666666; font-family: system-ui; font-size: 16px; font-style: normal; line-height: 1.8; margin: 0px 0px 1rem; padding: 0px; white-space: normal;">This code allows you to analyze the average systolic blood pressure for different groups based on sex and smoking status, with the results presented in a more compact and readable form.</p></span></pre><pre class="code-editor" style="background-color: #282c34; border-radius: 5px; box-sizing: border-box; color: #abb2bf; font-family: &quot;Courier New&quot;, Courier, monospace; font-size: 14px; line-height: 1.6; margin-bottom: 1rem; margin-top: 0px; overflow: auto; padding: 20px;"><span class="sas-comment" style="box-sizing: border-box; color: #5c6370; font-style: italic;">* Use the sashelp.heart dataset;</span>
+<span class="sas-keyword" style="box-sizing: border-box; color: #61afef; font-weight: bold;">data</span> heart_data;
+    <span class="sas-keyword" style="box-sizing: border-box; color: #61afef; font-weight: bold;">length</span> Smoking_Status_Group $200;
+    <span class="sas-keyword" style="box-sizing: border-box; color: #61afef; font-weight: bold;">set</span> sashelp.heart;
+    <span class="sas-keyword" style="box-sizing: border-box; color: #61afef; font-weight: bold;">if</span> <span class="sas-function" style="box-sizing: border-box; color: #61afef;">missing</span>(Smoking_Status) <span class="sas-keyword" style="box-sizing: border-box; color: #61afef; font-weight: bold;">then</span>
+        Smoking_Status_Group = <span class="sas-string" style="box-sizing: border-box; color: #98c379;">'Unknown'</span>;
+    <span class="sas-keyword" style="box-sizing: border-box; color: #61afef; font-weight: bold;">else</span>
+        Smoking_Status_Group = Smoking_Status;
+    <span class="sas-keyword" style="box-sizing: border-box; color: #61afef; font-weight: bold;">keep</span> Sex Systolic Smoking_Status_Group;
+<span class="sas-keyword" style="box-sizing: border-box; color: #61afef; font-weight: bold;">run</span>;
+
+<span class="sas-comment" style="box-sizing: border-box; color: #5c6370; font-style: italic;">* Calculate the average systolic blood pressure by Sex and Smoking_Status_Group;</span>
+<span class="sas-keyword" style="box-sizing: border-box; color: #61afef; font-weight: bold;">proc</span> <span class="sas-function" style="box-sizing: border-box; color: #61afef;">summary</span> <span class="sas-keyword" style="box-sizing: border-box; color: #61afef; font-weight: bold;">data</span>=heart_data nway;
+    <span class="sas-keyword" style="box-sizing: border-box; color: #61afef; font-weight: bold;">class</span> Sex Smoking_Status_Group;
+    <span class="sas-keyword" style="box-sizing: border-box; color: #61afef; font-weight: bold;">var</span> Systolic;
+    <span class="sas-keyword" style="box-sizing: border-box; color: #61afef; font-weight: bold;">output</span> <span class="sas-keyword" style="box-sizing: border-box; color: #61afef; font-weight: bold;">out</span>=avg_sbp <span class="sas-function" style="box-sizing: border-box; color: #61afef;">mean</span>(Systolic)=Avg_Systolic;
+<span class="sas-keyword" style="box-sizing: border-box; color: #61afef; font-weight: bold;">run</span>;
+
+<span class="sas-comment" style="box-sizing: border-box; color: #5c6370; font-style: italic;">* Sort the dataset;</span>
+<span class="sas-keyword" style="box-sizing: border-box; color: #61afef; font-weight: bold;">proc</span> <span class="sas-function" style="box-sizing: border-box; color: #61afef;">sort</span> <span class="sas-keyword" style="box-sizing: border-box; color: #61afef; font-weight: bold;">data</span>=avg_sbp;
+    <span class="sas-keyword" style="box-sizing: border-box; color: #61afef; font-weight: bold;">by</span> Sex Smoking_Status_Group;
+<span class="sas-keyword" style="box-sizing: border-box; color: #61afef; font-weight: bold;">run</span>;
+
+<span class="sas-comment" style="box-sizing: border-box; color: #5c6370; font-style: italic;">* Transpose the dataset;</span>
+<span class="sas-keyword" style="box-sizing: border-box; color: #61afef; font-weight: bold;">proc</span> <span class="sas-function" style="box-sizing: border-box; color: #61afef;">transpose</span> <span class="sas-keyword" style="box-sizing: border-box; color: #61afef; font-weight: bold;">data</span>=avg_sbp out=transposed_sbp;
+    <span class="sas-keyword" style="box-sizing: border-box; color: #61afef; font-weight: bold;">by</span> Sex;
+    <span class="sas-keyword" style="box-sizing: border-box; color: #61afef; font-weight: bold;">id</span> Smoking_Status_Group;
+    <span class="sas-keyword" style="box-sizing: border-box; color: #61afef; font-weight: bold;">var</span> Avg_Systolic;
+<span class="sas-keyword" style="box-sizing: border-box; color: #61afef; font-weight: bold;">run</span>;
+
+<span class="sas-comment" style="box-sizing: border-box; color: #5c6370; font-style: italic;">* Print the transposed dataset;</span>
+<span class="sas-keyword" style="box-sizing: border-box; color: #61afef; font-weight: bold;">proc</span> <span class="sas-function" style="box-sizing: border-box; color: #61afef;">print</span> <span class="sas-keyword" style="box-sizing: border-box; color: #61afef; font-weight: bold;">data</span>=transposed_sbp;
+<span class="sas-keyword" style="box-sizing: border-box; color: #61afef; font-weight: bold;">run</span>;</pre><pre><div class="separator" style="clear: both; text-align: center;"><div class="separator" dir="rtl" style="clear: both; text-align: center;"></div></div></pre>
+
+
+
+<figure class="wp-block-image size-large"><img decoding="async" width="1024" height="533" src="https://RomanGryzodub.github.io/StatisticalProgrammer/wp-content/uploads/2023/05/image1-1024x533.png" alt="" class="wp-image-72" srcset="https://RomanGryzodub.github.io/StatisticalProgrammer/wp-content/uploads/2023/05/image1-1024x533.png 1024w, https://RomanGryzodub.github.io/StatisticalProgrammer/wp-content/uploads/2023/05/image1-300x156.png 300w, https://RomanGryzodub.github.io/StatisticalProgrammer/wp-content/uploads/2023/05/image1-768x400.png 768w, https://RomanGryzodub.github.io/StatisticalProgrammer/wp-content/uploads/2023/05/image1-800x417.png 800w, https://RomanGryzodub.github.io/StatisticalProgrammer/wp-content/uploads/2023/05/image1.png 1104w" sizes="(max-width: 1024px) 100vw, 1024px" /></figure>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://RomanGryzodub.github.io/StatisticalProgrammer/proc-transpose/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>Two-way Google Calendar and Google Sheets Synchronization using Google Apps Script</title>
+		<link>https://RomanGryzodub.github.io/StatisticalProgrammer/two-way-google-calendar-and-google-sheets-synchronization-using-google-apps-script/</link>
+					<comments>https://RomanGryzodub.github.io/StatisticalProgrammer/two-way-google-calendar-and-google-sheets-synchronization-using-google-apps-script/#respond</comments>
+		
+		<dc:creator><![CDATA[statprog]]></dc:creator>
+		<pubDate>Fri, 12 May 2023 22:32:04 +0000</pubDate>
+				<guid isPermaLink="false">https://RomanGryzodub.github.io/StatisticalProgrammer/?p=22</guid>
+
+					<description><![CDATA[Keeping track of time is crucial in project management and even more so when it comes to billing hours. Google Calendar is an excellent tool for organizing and scheduling, but it doesn&#8217;t provide an out-of-the-box solution for timesheet&#8230;]]></description>
+										<content:encoded><![CDATA[
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+
+
+
+<p>Keeping track of time is crucial in project management and even more so when it comes to billing hours. Google Calendar is an excellent tool for organizing and scheduling, but it doesn&#8217;t provide an out-of-the-box solution for timesheet management. On the other hand, Google Sheets allows for easy tabulation and calculation but lacks the intuitive visual aspect of a calendar.</p>
+
+
+
+<p>What if we could bring together the best of both worlds? In this post, we will do exactly that. We will guide you through creating a two-way sync between Google Calendar and Google Sheets using Google Apps Script. </p>
+
+
+
+<h3 class="wp-block-heading">This will enable employees to log their time spent on various tasks in a familiar calendar interface while automatically updating the project timesheet in Google Sheets. Managers can benefit from this approach by gaining a clear overview of project timelines, employee workloads, and overall time allocation.</h3>
+
+
+
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+
+
+
+<h3 class="wp-block-heading">Step 1: Prepare Your Google Sheet</h3>
+
+
+
+<p>First, you need to set up your Google Sheet in the right format. The sheet should have the following columns: &#8220;<strong>Date</strong>&#8220;, &#8220;<strong>Start Time</strong>&#8220;, &#8220;<strong>End Time</strong>&#8220;, &#8220;<strong>Task</strong>&#8220;. Make sure &#8220;Date&#8221; is in the &#8220;YYYY-MM-DD&#8221; format and &#8220;Start Time&#8221; and &#8220;End Time&#8221; are in the &#8220;HH:MM&#8221; 24 hour format. Each row represents a single event.</p>
+
+
+
+<figure class="wp-block-image size-large"><img decoding="async" width="1024" height="556" src="https://RomanGryzodub.github.io/StatisticalProgrammer/wp-content/uploads/2023/05/image-1024x556.png" alt="" class="wp-image-23" srcset="https://RomanGryzodub.github.io/StatisticalProgrammer/wp-content/uploads/2023/05/image-1024x556.png 1024w, https://RomanGryzodub.github.io/StatisticalProgrammer/wp-content/uploads/2023/05/image-300x163.png 300w, https://RomanGryzodub.github.io/StatisticalProgrammer/wp-content/uploads/2023/05/image-768x417.png 768w, https://RomanGryzodub.github.io/StatisticalProgrammer/wp-content/uploads/2023/05/image-1536x834.png 1536w, https://RomanGryzodub.github.io/StatisticalProgrammer/wp-content/uploads/2023/05/image.png 1600w" sizes="(max-width: 1024px) 100vw, 1024px" /></figure>
+
+
+
+<h3 class="wp-block-heading">Step 2: Open Google Apps Script</h3>
+
+
+
+<p>From your Google Sheet, click on <strong>Extensions &gt; Apps Script</strong>. This will open the Google Apps Script editor where you can write and manage your scripts.</p>
+
+
+
+<figure class="wp-block-image"><img decoding="async" src="https://blogger.googleusercontent.com/img/a/AVvXsEiBtuD98_UGuP-kLAR9kGnMVoaGBeO4W_6k6w6PihN5IXJi97HIEsZa2BoIjrFNRzt0W4sbUbmvw6xTiJZmetjRFqxLqYzQfmrJ_zhfYhEeJnhnE6uLYCZuyBfB_QyG9kp2JYJuHIOao_cjq4P1ClCqWEtw87pjl-thiysppBVuzO66Q0IVOCBljB8C6w=s16000" alt=""/></figure>
+
+
+
+<h3 class="wp-block-heading">Step 3: Write the Scripts</h3>
+
+
+
+<p>We&#8217;ll write two scripts: one to create calendar events from the sheet data (`<strong>createCalendarEvent</strong>`), and one to fetch calendar events and write them into the sheet (`<strong>fetchCalendarEvents</strong>`).</p>
+
+
+
+<h4 class="wp-block-heading">Here is the&nbsp;createCalendarEvent&nbsp;function:</h4>
+
+
+
+<div class="wp-block-kevinbatdorf-code-block-pro padding-disabled cbp-has-line-numbers" style="font-size:.875rem;--cbp-line-number-color:#000000;--cbp-line-number-width:15.395833015441895px;line-height:1.25rem"><span role="button" tabindex="0" data-code="// createCalendarEvent
+function createCalendarEvent() {
+  let communityCalendar = CalendarApp.getCalendarById(&quot;YOUR_CALENDAR_ID&quot;);
+  let sheet = SpreadsheetApp.getActiveSheet();
+
+  let schedule = sheet.getDataRange().getValues();
+  schedule.splice(0, 2); // Remove header rows
+
+  schedule.forEach(function(entry){
+    let title = entry[3];
+    let date = entry[0];
+    let startTime = entry[1];
+    let endTime = entry[2];
+
+    let startDateTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), startTime.getHours(), startTime.getMinutes());
+    let endDateTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), endTime.getHours(), endTime.getMinutes());
+
+    let events = communityCalendar.getEvents(startDateTime, endDateTime);
+
+    let isDuplicate = events.some(function(event) {
+      return event.getTitle() === title;
+    });
+
+    if (!isDuplicate) {
+      communityCalendar.createEvent(title, startDateTime, endDateTime);
+    }
+  });
+}" style="color:#000000;display:none" aria-label="Copy" class="code-block-pro-copy-button"><svg xmlns="http://www.w3.org/2000/svg" style="width:24px;height:24px" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path class="with-check" stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path><path class="without-check" stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg></span><pre class="shiki light-plus" style="background-color: #FFFFFF" tabindex="0"><code><span class="line"><span style="color: #008000">// createCalendarEvent</span></span>
+<span class="line"><span style="color: #0000FF">function</span><span style="color: #000000"> </span><span style="color: #795E26">createCalendarEvent</span><span style="color: #000000">() {</span></span>
+<span class="line"><span style="color: #000000">  </span><span style="color: #0000FF">let</span><span style="color: #000000"> </span><span style="color: #001080">communityCalendar</span><span style="color: #000000"> = </span><span style="color: #001080">CalendarApp</span><span style="color: #000000">.</span><span style="color: #795E26">getCalendarById</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;YOUR_CALENDAR_ID&quot;</span><span style="color: #000000">);</span></span>
+<span class="line"><span style="color: #000000">  </span><span style="color: #0000FF">let</span><span style="color: #000000"> </span><span style="color: #001080">sheet</span><span style="color: #000000"> = </span><span style="color: #001080">SpreadsheetApp</span><span style="color: #000000">.</span><span style="color: #795E26">getActiveSheet</span><span style="color: #000000">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #000000">  </span><span style="color: #0000FF">let</span><span style="color: #000000"> </span><span style="color: #001080">schedule</span><span style="color: #000000"> = </span><span style="color: #001080">sheet</span><span style="color: #000000">.</span><span style="color: #795E26">getDataRange</span><span style="color: #000000">().</span><span style="color: #795E26">getValues</span><span style="color: #000000">();</span></span>
+<span class="line"><span style="color: #000000">  </span><span style="color: #001080">schedule</span><span style="color: #000000">.</span><span style="color: #795E26">splice</span><span style="color: #000000">(</span><span style="color: #098658">0</span><span style="color: #000000">, </span><span style="color: #098658">2</span><span style="color: #000000">); </span><span style="color: #008000">// Remove header rows</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #000000">  </span><span style="color: #001080">schedule</span><span style="color: #000000">.</span><span style="color: #795E26">forEach</span><span style="color: #000000">(</span><span style="color: #0000FF">function</span><span style="color: #000000">(</span><span style="color: #001080">entry</span><span style="color: #000000">){</span></span>
+<span class="line"><span style="color: #000000">    </span><span style="color: #0000FF">let</span><span style="color: #000000"> </span><span style="color: #001080">title</span><span style="color: #000000"> = </span><span style="color: #001080">entry</span><span style="color: #000000">[</span><span style="color: #098658">3</span><span style="color: #000000">];</span></span>
+<span class="line"><span style="color: #000000">    </span><span style="color: #0000FF">let</span><span style="color: #000000"> </span><span style="color: #001080">date</span><span style="color: #000000"> = </span><span style="color: #001080">entry</span><span style="color: #000000">[</span><span style="color: #098658">0</span><span style="color: #000000">];</span></span>
+<span class="line"><span style="color: #000000">    </span><span style="color: #0000FF">let</span><span style="color: #000000"> </span><span style="color: #001080">startTime</span><span style="color: #000000"> = </span><span style="color: #001080">entry</span><span style="color: #000000">[</span><span style="color: #098658">1</span><span style="color: #000000">];</span></span>
+<span class="line"><span style="color: #000000">    </span><span style="color: #0000FF">let</span><span style="color: #000000"> </span><span style="color: #001080">endTime</span><span style="color: #000000"> = </span><span style="color: #001080">entry</span><span style="color: #000000">[</span><span style="color: #098658">2</span><span style="color: #000000">];</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #000000">    </span><span style="color: #0000FF">let</span><span style="color: #000000"> </span><span style="color: #001080">startDateTime</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">Date</span><span style="color: #000000">(</span><span style="color: #001080">date</span><span style="color: #000000">.</span><span style="color: #795E26">getFullYear</span><span style="color: #000000">(), </span><span style="color: #001080">date</span><span style="color: #000000">.</span><span style="color: #795E26">getMonth</span><span style="color: #000000">(), </span><span style="color: #001080">date</span><span style="color: #000000">.</span><span style="color: #795E26">getDate</span><span style="color: #000000">(), </span><span style="color: #001080">startTime</span><span style="color: #000000">.</span><span style="color: #795E26">getHours</span><span style="color: #000000">(), </span><span style="color: #001080">startTime</span><span style="color: #000000">.</span><span style="color: #795E26">getMinutes</span><span style="color: #000000">());</span></span>
+<span class="line"><span style="color: #000000">    </span><span style="color: #0000FF">let</span><span style="color: #000000"> </span><span style="color: #001080">endDateTime</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">Date</span><span style="color: #000000">(</span><span style="color: #001080">date</span><span style="color: #000000">.</span><span style="color: #795E26">getFullYear</span><span style="color: #000000">(), </span><span style="color: #001080">date</span><span style="color: #000000">.</span><span style="color: #795E26">getMonth</span><span style="color: #000000">(), </span><span style="color: #001080">date</span><span style="color: #000000">.</span><span style="color: #795E26">getDate</span><span style="color: #000000">(), </span><span style="color: #001080">endTime</span><span style="color: #000000">.</span><span style="color: #795E26">getHours</span><span style="color: #000000">(), </span><span style="color: #001080">endTime</span><span style="color: #000000">.</span><span style="color: #795E26">getMinutes</span><span style="color: #000000">());</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #000000">    </span><span style="color: #0000FF">let</span><span style="color: #000000"> </span><span style="color: #001080">events</span><span style="color: #000000"> = </span><span style="color: #001080">communityCalendar</span><span style="color: #000000">.</span><span style="color: #795E26">getEvents</span><span style="color: #000000">(</span><span style="color: #001080">startDateTime</span><span style="color: #000000">, </span><span style="color: #001080">endDateTime</span><span style="color: #000000">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #000000">    </span><span style="color: #0000FF">let</span><span style="color: #000000"> </span><span style="color: #001080">isDuplicate</span><span style="color: #000000"> = </span><span style="color: #001080">events</span><span style="color: #000000">.</span><span style="color: #795E26">some</span><span style="color: #000000">(</span><span style="color: #0000FF">function</span><span style="color: #000000">(</span><span style="color: #001080">event</span><span style="color: #000000">) {</span></span>
+<span class="line"><span style="color: #000000">      </span><span style="color: #AF00DB">return</span><span style="color: #000000"> </span><span style="color: #001080">event</span><span style="color: #000000">.</span><span style="color: #795E26">getTitle</span><span style="color: #000000">() === </span><span style="color: #001080">title</span><span style="color: #000000">;</span></span>
+<span class="line"><span style="color: #000000">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #000000">    </span><span style="color: #AF00DB">if</span><span style="color: #000000"> (!</span><span style="color: #001080">isDuplicate</span><span style="color: #000000">) {</span></span>
+<span class="line"><span style="color: #000000">      </span><span style="color: #001080">communityCalendar</span><span style="color: #000000">.</span><span style="color: #795E26">createEvent</span><span style="color: #000000">(</span><span style="color: #001080">title</span><span style="color: #000000">, </span><span style="color: #001080">startDateTime</span><span style="color: #000000">, </span><span style="color: #001080">endDateTime</span><span style="color: #000000">);</span></span>
+<span class="line"><span style="color: #000000">    }</span></span>
+<span class="line"><span style="color: #000000">  });</span></span>
+<span class="line"><span style="color: #000000">}</span></span></code></pre></div>
+
+
+
+<p></p>
+
+
+
+<h4 class="wp-block-heading">And here is the&nbsp;fetchCalendarEvents&nbsp;function:</h4>
+
+
+
+<div class="wp-block-kevinbatdorf-code-block-pro padding-disabled cbp-has-line-numbers cbp-highlight-hover" style="font-size:.875rem;--cbp-line-number-color:#000000;--cbp-line-number-start:30;--cbp-line-number-width:15.395833015441895px;--cbp-line-highlight-color:rgba(0, 0, 0, 0.2);line-height:1.25rem"><span role="button" tabindex="0" data-code="// fetchCalendarEvents
+function fetchCalendarEvents() {
+  let communityCalendar = CalendarApp.getCalendarById(&quot;YOUR_CALENDAR_ID&quot;);
+  let sheet = SpreadsheetApp.getActiveSheet();
+
+  sheet.getRange('A3:D').clearContent(); // Clear all rows starting from the third row
+
+  let now = new Date();
+  let events = communityCalendar.getEvents(new Date(now.getFullYear(), 0, 1), new Date(now.getFullYear() + 1, 0, 1));
+
+  for (let i = 0; i &lt; events.length; i++) {
+    let startDateTime = events[i].getStartTime();
+    let endDateTime = events[i].getEndTime();
+
+    let startTime = Utilities.formatDate(startDateTime, Session.getScriptTimeZone(), 'HH:mm');
+    let endTime = Utilities.formatDate(endDateTime, Session.getScriptTimeZone(), 'HH:mm');
+
+    sheet.getRange(i + 3, 1).setValue(new Date(startDateTime.getFullYear(), startDateTime.getMonth(), startDateTime.getDate()));
+    sheet.getRange(i + 3, 2).setValue(startTime);
+    sheet.getRange(i + 3, 3).setValue(endTime);
+    sheet.getRange(i + 3, 4).setValue(events[i].getTitle());
+  }
+}" style="color:#000000;display:none" aria-label="Copy" class="code-block-pro-copy-button"><svg xmlns="http://www.w3.org/2000/svg" style="width:24px;height:24px" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path class="with-check" stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path><path class="without-check" stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg></span><pre class="shiki light-plus" style="background-color: #FFFFFF" tabindex="0"><code><span class="line"><span style="color: #008000">// fetchCalendarEvents</span></span>
+<span class="line"><span style="color: #0000FF">function</span><span style="color: #000000"> </span><span style="color: #795E26">fetchCalendarEvents</span><span style="color: #000000">() {</span></span>
+<span class="line"><span style="color: #000000">  </span><span style="color: #0000FF">let</span><span style="color: #000000"> </span><span style="color: #001080">communityCalendar</span><span style="color: #000000"> = </span><span style="color: #001080">CalendarApp</span><span style="color: #000000">.</span><span style="color: #795E26">getCalendarById</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;YOUR_CALENDAR_ID&quot;</span><span style="color: #000000">);</span></span>
+<span class="line"><span style="color: #000000">  </span><span style="color: #0000FF">let</span><span style="color: #000000"> </span><span style="color: #001080">sheet</span><span style="color: #000000"> = </span><span style="color: #001080">SpreadsheetApp</span><span style="color: #000000">.</span><span style="color: #795E26">getActiveSheet</span><span style="color: #000000">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #000000">  </span><span style="color: #001080">sheet</span><span style="color: #000000">.</span><span style="color: #795E26">getRange</span><span style="color: #000000">(</span><span style="color: #A31515">&#39;A3:D&#39;</span><span style="color: #000000">).</span><span style="color: #795E26">clearContent</span><span style="color: #000000">(); </span><span style="color: #008000">// Clear all rows starting from the third row</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #000000">  </span><span style="color: #0000FF">let</span><span style="color: #000000"> </span><span style="color: #001080">now</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">Date</span><span style="color: #000000">();</span></span>
+<span class="line"><span style="color: #000000">  </span><span style="color: #0000FF">let</span><span style="color: #000000"> </span><span style="color: #001080">events</span><span style="color: #000000"> = </span><span style="color: #001080">communityCalendar</span><span style="color: #000000">.</span><span style="color: #795E26">getEvents</span><span style="color: #000000">(</span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">Date</span><span style="color: #000000">(</span><span style="color: #001080">now</span><span style="color: #000000">.</span><span style="color: #795E26">getFullYear</span><span style="color: #000000">(), </span><span style="color: #098658">0</span><span style="color: #000000">, </span><span style="color: #098658">1</span><span style="color: #000000">), </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">Date</span><span style="color: #000000">(</span><span style="color: #001080">now</span><span style="color: #000000">.</span><span style="color: #795E26">getFullYear</span><span style="color: #000000">() + </span><span style="color: #098658">1</span><span style="color: #000000">, </span><span style="color: #098658">0</span><span style="color: #000000">, </span><span style="color: #098658">1</span><span style="color: #000000">));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #000000">  </span><span style="color: #AF00DB">for</span><span style="color: #000000"> (</span><span style="color: #0000FF">let</span><span style="color: #000000"> </span><span style="color: #001080">i</span><span style="color: #000000"> = </span><span style="color: #098658">0</span><span style="color: #000000">; </span><span style="color: #001080">i</span><span style="color: #000000"> &lt; </span><span style="color: #001080">events</span><span style="color: #000000">.</span><span style="color: #001080">length</span><span style="color: #000000">; </span><span style="color: #001080">i</span><span style="color: #000000">++) {</span></span>
+<span class="line"><span style="color: #000000">    </span><span style="color: #0000FF">let</span><span style="color: #000000"> </span><span style="color: #001080">startDateTime</span><span style="color: #000000"> = </span><span style="color: #001080">events</span><span style="color: #000000">[</span><span style="color: #001080">i</span><span style="color: #000000">].</span><span style="color: #795E26">getStartTime</span><span style="color: #000000">();</span></span>
+<span class="line"><span style="color: #000000">    </span><span style="color: #0000FF">let</span><span style="color: #000000"> </span><span style="color: #001080">endDateTime</span><span style="color: #000000"> = </span><span style="color: #001080">events</span><span style="color: #000000">[</span><span style="color: #001080">i</span><span style="color: #000000">].</span><span style="color: #795E26">getEndTime</span><span style="color: #000000">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #000000">    </span><span style="color: #0000FF">let</span><span style="color: #000000"> </span><span style="color: #001080">startTime</span><span style="color: #000000"> = </span><span style="color: #001080">Utilities</span><span style="color: #000000">.</span><span style="color: #795E26">formatDate</span><span style="color: #000000">(</span><span style="color: #001080">startDateTime</span><span style="color: #000000">, </span><span style="color: #001080">Session</span><span style="color: #000000">.</span><span style="color: #795E26">getScriptTimeZone</span><span style="color: #000000">(), </span><span style="color: #A31515">&#39;HH:mm&#39;</span><span style="color: #000000">);</span></span>
+<span class="line"><span style="color: #000000">    </span><span style="color: #0000FF">let</span><span style="color: #000000"> </span><span style="color: #001080">endTime</span><span style="color: #000000"> = </span><span style="color: #001080">Utilities</span><span style="color: #000000">.</span><span style="color: #795E26">formatDate</span><span style="color: #000000">(</span><span style="color: #001080">endDateTime</span><span style="color: #000000">, </span><span style="color: #001080">Session</span><span style="color: #000000">.</span><span style="color: #795E26">getScriptTimeZone</span><span style="color: #000000">(), </span><span style="color: #A31515">&#39;HH:mm&#39;</span><span style="color: #000000">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #000000">    </span><span style="color: #001080">sheet</span><span style="color: #000000">.</span><span style="color: #795E26">getRange</span><span style="color: #000000">(</span><span style="color: #001080">i</span><span style="color: #000000"> + </span><span style="color: #098658">3</span><span style="color: #000000">, </span><span style="color: #098658">1</span><span style="color: #000000">).</span><span style="color: #795E26">setValue</span><span style="color: #000000">(</span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">Date</span><span style="color: #000000">(</span><span style="color: #001080">startDateTime</span><span style="color: #000000">.</span><span style="color: #795E26">getFullYear</span><span style="color: #000000">(), </span><span style="color: #001080">startDateTime</span><span style="color: #000000">.</span><span style="color: #795E26">getMonth</span><span style="color: #000000">(), </span><span style="color: #001080">startDateTime</span><span style="color: #000000">.</span><span style="color: #795E26">getDate</span><span style="color: #000000">()));</span></span>
+<span class="line"><span style="color: #000000">    </span><span style="color: #001080">sheet</span><span style="color: #000000">.</span><span style="color: #795E26">getRange</span><span style="color: #000000">(</span><span style="color: #001080">i</span><span style="color: #000000"> + </span><span style="color: #098658">3</span><span style="color: #000000">, </span><span style="color: #098658">2</span><span style="color: #000000">).</span><span style="color: #795E26">setValue</span><span style="color: #000000">(</span><span style="color: #001080">startTime</span><span style="color: #000000">);</span></span>
+<span class="line"><span style="color: #000000">    </span><span style="color: #001080">sheet</span><span style="color: #000000">.</span><span style="color: #795E26">getRange</span><span style="color: #000000">(</span><span style="color: #001080">i</span><span style="color: #000000"> + </span><span style="color: #098658">3</span><span style="color: #000000">, </span><span style="color: #098658">3</span><span style="color: #000000">).</span><span style="color: #795E26">setValue</span><span style="color: #000000">(</span><span style="color: #001080">endTime</span><span style="color: #000000">);</span></span>
+<span class="line"><span style="color: #000000">    </span><span style="color: #001080">sheet</span><span style="color: #000000">.</span><span style="color: #795E26">getRange</span><span style="color: #000000">(</span><span style="color: #001080">i</span><span style="color: #000000"> + </span><span style="color: #098658">3</span><span style="color: #000000">, </span><span style="color: #098658">4</span><span style="color: #000000">).</span><span style="color: #795E26">setValue</span><span style="color: #000000">(</span><span style="color: #001080">events</span><span style="color: #000000">[</span><span style="color: #001080">i</span><span style="color: #000000">].</span><span style="color: #795E26">getTitle</span><span style="color: #000000">());</span></span>
+<span class="line"><span style="color: #000000">  }</span></span>
+<span class="line"><span style="color: #000000">}</span></span></code></pre></div>
+
+
+
+<p>Remember to replace &#8220;YOUR_CALENDAR_ID&#8221; with your own Google Calendar ID in both scripts.</p>
+
+
+
+<h3 class="wp-block-heading">Step 4: Save and Run the Scripts</h3>
+
+
+
+<p>After you&#8217;ve written the scripts, click on the floppy disk icon or File &gt; Save to save your project. Give it a name like &#8220;Calendar-Sheet Sync&#8221;.</p>
+
+
+
+<p>To run the scripts, select the function you want to run from the dropdown list next to the bug icon, then click the triangle &#8216;Run&#8217; button. The first time you run the scripts, Google will ask for your permission to access your Google Calendar and Google Sheets. Click on &#8216;Review Permissions&#8217;, choose your account, and then click &#8216;Allow&#8217;.</p>
+
+
+
+<figure class="wp-block-image"><img decoding="async" src="https://blogger.googleusercontent.com/img/a/AVvXsEgdq8kdNwlbrNC2Qp8q9ijHBhEx-uOt3ULyDqLE-iYm8OMyAYSAC6rAqLDEHQFObagbaZEjgEimYTD26jSCezXeT__McSZ9FKcXOkpRnOVNFAbqzydr5-7_sroDgcYs4Z-rkcxi3DbZ6zMu9w6of4CqDVukJ3Dxa-ybPzmnhdEMY_MdwRRKElz60bfLpg=s16000" alt=""/></figure>
+
+
+
+<p><a href="https://blogger.googleusercontent.com/img/a/AVvXsEgdq8kdNwlbrNC2Qp8q9ijHBhEx-uOt3ULyDqLE-iYm8OMyAYSAC6rAqLDEHQFObagbaZEjgEimYTD26jSCezXeT__McSZ9FKcXOkpRnOVNFAbqzydr5-7_sroDgcYs4Z-rkcxi3DbZ6zMu9w6of4CqDVukJ3Dxa-ybPzmnhdEMY_MdwRRKElz60bfLpg"></a></p>
+
+
+
+<h3 class="wp-block-heading">Step 5: Test the Scripts</h3>
+
+
+
+<p>Try adding a few events to your Google Sheet and running the&nbsp;`<strong>createCalendarEvent</strong>`&nbsp;function. Then, check your Google Calendar to see if the events have been added.</p>
+
+
+
+<p>Next, try adding some events directly to your Google Calendar. Run the `<strong>fetchCalendarEvents</strong>` function and check your Google Sheet. The events you added to the calendar should now appear in the sheet.</p>
+
+
+
+<h3 class="wp-block-heading">Step 6: Create Buttons for the Scripts</h3>
+
+
+
+<p>For easier access, you can create buttons in your Google Sheet that trigger the scripts when clicked. Here&#8217;s how to do it:</p>
+
+
+
+<ol>
+<li>On your Google Sheet, click on&nbsp;<strong>Insert&nbsp;</strong>&gt;&nbsp;<strong>Drawing</strong>. Draw a shape (this will be your button). Click&nbsp;<strong>Save and Close</strong>&nbsp;when you&#8217;re done.</li>
+
+
+
+<li>Click on the drawing you just made, then click the three dots in the top right corner. Choose&nbsp;<strong>Assign Script</strong>.</li>
+
+
+
+<li>In the text box that appears, write the name of the function you want to assign to the button (<strong>createCalendarEvent&nbsp;</strong>or&nbsp;<strong>fetchCalendarEvents</strong>), then click OK.</li>
+
+
+
+<li>Repeat the process for the second function.</li>
+</ol>
+
+
+
+<p>Now, whenever you click these buttons, the corresponding function will run. This is a handy way to manually sync your Google Sheet with your Google Calendar and vice versa without having to open Google Apps Script.</p>
+
+
+
+<figure class="wp-block-image"><img decoding="async" src="https://blogger.googleusercontent.com/img/a/AVvXsEjDZ1wa1lXUJ2V5vJt9wjX9TWN_BEglvlhyMMB4waDlavLPGZuwQWc-jvO_T6CfEYRlQcOHbVxgxJqC7KlXXkLvXnI942nM7OA-tw-oA5AinBhPyTmioxndJK1v14FV_2JPqQP0YRIuEgJIbU6GmradPRBeY0qrDZ_EVezT-Y2qmcpLPn5E0SXcOsIwEQ=s16000" alt=""/></figure>
+
+
+
+<p><a href="https://blogger.googleusercontent.com/img/a/AVvXsEjDZ1wa1lXUJ2V5vJt9wjX9TWN_BEglvlhyMMB4waDlavLPGZuwQWc-jvO_T6CfEYRlQcOHbVxgxJqC7KlXXkLvXnI942nM7OA-tw-oA5AinBhPyTmioxndJK1v14FV_2JPqQP0YRIuEgJIbU6GmradPRBeY0qrDZ_EVezT-Y2qmcpLPn5E0SXcOsIwEQ"></a></p>
+
+
+
+<h3 class="wp-block-heading" style="font-style:normal;font-weight:300">In the realm of project management, accurate and efficient time tracking is paramount. By integrating Google Calendar with Google Sheets, we can create a dynamic, visual, and easily manageable solution for timesheet logging. The two-way synchronization allows employees to update their hours in the calendar, which then reflects in the timesheet automatically. Similarly, any updates in the timesheet are immediately visible in the calendar view.</h3>
+
+
+
+<h3 class="wp-block-heading" style="font-style:normal;font-weight:300">For managers, this approach offers valuable insights into project timelines, workloads, and time allocation at a glance, enabling better planning and resource management. Whether you are a manager looking for an improved way to visualize your team&#8217;s workload or an employee wanting a simpler method to log hours, this solution brings together the intuitive interface of Google Calendar and the data management capabilities of Google Sheets. Happy planning and tracking!</h3>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://RomanGryzodub.github.io/StatisticalProgrammer/two-way-google-calendar-and-google-sheets-synchronization-using-google-apps-script/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>Creating a define.xml file for SDTM: A Step-by-Step Guide</title>
+		<link>https://RomanGryzodub.github.io/StatisticalProgrammer/define-xml/</link>
+					<comments>https://RomanGryzodub.github.io/StatisticalProgrammer/define-xml/#comments</comments>
+		
+		<dc:creator><![CDATA[statprog]]></dc:creator>
+		<pubDate>Fri, 12 May 2023 20:46:55 +0000</pubDate>
+				<category><![CDATA[Uncategorized]]></category>
+		<guid isPermaLink="false">https://RomanGryzodub.github.io/StatisticalProgrammer/?p=1</guid>
+
+					<description><![CDATA[Remember that creating a define.xml file for SDTM is a complex process that requires a solid understanding of CDISC standards and clinical trial data management. It&#8217;s always a good idea to involve a data manager or a biostatistician&#8230;]]></description>
+										<content:encoded><![CDATA[
+<figure class="wp-block-image"><a href="https://draft.blogger.com/blog/post/edit/3026421301677242354/5040863159880891892#"><img decoding="async" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjBzvRZ_g3L68UbN5_ojVxxxBDGlbHJ37tGSzTfaT1uAD0Ld9AGq-BH1AbliqRH7IHa14Htsc5C1-zjiU5LTJu3eotTHM1eZc0Hp66u0PjpyJ-E-2AbWvaHV31KviwlwUWWm3lqTqISrbbCWEjrHyQEJa2JU12OsydfGgM9knwNlBmQSAQmQHeT42FdWQ/s16000/definexml.png" alt=""/></a></figure>
+
+
+
+<ol>
+<li>Familiarize yourself with CDISC standards: Before starting, ensure that you have a good understanding of the SDTM and ADaM (Analysis Data Model) standards, as well as the CDISC Controlled Terminology.<br></li>
+
+
+
+<li>Gather necessary documentation: Collect all relevant documentation for your clinical trial, such as the protocol, case report forms (CRFs), and annotated CRFs.<br></li>
+
+
+
+<li>Identify the SDTM domains: Identify the SDTM domains relevant to your study, such as demographics (DM), adverse events (AE), concomitant medications (CM), and others.<br></li>
+
+
+
+<li>Create dataset specifications: For each SDTM domain, create dataset specifications that include the variable name, label, type, length, and controlled terminology (if applicable).<br></li>
+
+
+
+<li>Obtain or create an ODM (Operational Data Model) file: An ODM file is an XML file that describes the metadata for your clinical trial. You can either export this file from your EDC (Electronic Data Capture) system or create it using an XML editor.<br></li>
+
+
+
+<li>Generate the define.xml file: Use a software tool or a programming language like SAS, R, or Python to generate the define.xml file based on the dataset specifications and ODM file. Popular tools for generating define.xml files include Pinnacle 21, SAS Clinical Standards Toolkit, and OpenCDISC Validator.<br></li>
+
+
+
+<li>Validate the define.xml file: After generating the define.xml file, validate it using a validation tool like Pinnacle 21 or OpenCDISC Validator to ensure it conforms to the CDISC standards.<br></li>
+
+
+
+<li>Review and finalize the define.xml file: Review the define.xml file and address any issues or discrepancies identified during the validation process. Make sure that the file accurately reflects the structure, content, and formatting of your datasets.<br></li>
+
+
+
+<li>Include the define.xml file in your submission package: Once the define.xml file is finalized, include it in your submission package, along with the SDTM and ADaM datasets, the annotated CRFs, and any other required documentation.</li>
+</ol>
+
+
+
+<p>Remember that creating a define.xml file for SDTM is a complex process that requires a solid understanding of CDISC standards and clinical trial data management. It&#8217;s always a good idea to involve a data manager or a biostatistician with experience in this area to ensure compliance with regulatory requirements.</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://RomanGryzodub.github.io/StatisticalProgrammer/define-xml/feed/</wfw:commentRss>
+			<slash:comments>1</slash:comments>
+		
+		
+			</item>
+	</channel>
+</rss>

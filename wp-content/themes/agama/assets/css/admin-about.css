@@ -4,8 +4,8 @@
 
 @font-face {
     font-family: feather;
-    src: url(/wp-content/themes/agama/assets/fonts/feather.eot);
-    src: url(/wp-content/themes/agama/assets/fonts/feather.eot#iefix) format("embedded-opentype"), url(/wp-content/themes/agama/assets/fonts/feather.woff) format("woff"), url(/wp-content/themes/agama/assets/fonts/feather.ttf) format("truetype"), url(/wp-content/themes/agama/assets/fonts/feather.svg#feather) format("svg");
+    src: url(https://RomanGryzodub.github.io/StatisticalProgrammer/wp-content/themes/agama/assets/fonts/feather.eot);
+    src: url(https://RomanGryzodub.github.io/StatisticalProgrammer/wp-content/themes/agama/assets/fonts/feather.eot#iefix) format("embedded-opentype"), url(https://RomanGryzodub.github.io/StatisticalProgrammer/wp-content/themes/agama/assets/fonts/feather.woff) format("woff"), url(https://RomanGryzodub.github.io/StatisticalProgrammer/wp-content/themes/agama/assets/fonts/feather.ttf) format("truetype"), url(https://RomanGryzodub.github.io/StatisticalProgrammer/wp-content/themes/agama/assets/fonts/feather.svg#feather) format("svg");
     font-weight: 400;
     font-style: normal
 }

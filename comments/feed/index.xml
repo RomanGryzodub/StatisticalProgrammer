@@ -8,8 +8,8 @@
 <channel>
 	<title>
 	Comments for Statistical Programming in Clinical Trials	</title>
-	<atom:link href="/comments/feed/" rel="self" type="application/rss+xml" />
-	<link></link>
+	<atom:link href="https://RomanGryzodub.github.io/StatisticalProgrammer/comments/feed/" rel="self" type="application/rss+xml" />
+	<link>https://RomanGryzodub.github.io/StatisticalProgrammer</link>
 	<description></description>
 	<lastBuildDate>Sun, 14 May 2023 17:18:19 +0000</lastBuildDate>
 	<sy:updatePeriod>
@@ -20,11 +20,11 @@
 	<item>
 		<title>
 		Comment on Creating a define.xml file for SDTM: A Step-by-Step Guide by A WordPress Commenter		</title>
-		<link>/define-xml/#comment-1</link>
+		<link>https://RomanGryzodub.github.io/StatisticalProgrammer/define-xml/#comment-1</link>
 
 		<dc:creator><![CDATA[A WordPress Commenter]]></dc:creator>
 		<pubDate>Fri, 12 May 2023 20:46:55 +0000</pubDate>
-		<guid isPermaLink="false">/?p=1#comment-1</guid>
+		<guid isPermaLink="false">https://RomanGryzodub.github.io/StatisticalProgrammer/?p=1#comment-1</guid>
 
 					<description><![CDATA[Hi, this is a comment.
 To get started with moderating, editing, and deleting comments, please visit the Comments screen in the dashboard.

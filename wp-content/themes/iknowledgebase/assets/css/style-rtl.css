@@ -11241,8 +11241,8 @@ a.has-text-danger-dark:hover, a.has-text-danger-dark:focus {
 
 @font-face {
 	font-family: "iknowledgebase";
-	src: url("/wp-content/themes/iknowledgebase/assets/font/iknowledgebase.eot");
-	src: url("/wp-content/themes/iknowledgebase/assets/font/iknowledgebase.eot?m4qrx6#iefix") format("embedded-opentype"), url("/wp-content/themes/iknowledgebase/assets/font/iknowledgebase.woff2?m4qrx6") format("woff2"), url("/wp-content/themes/iknowledgebase/assets/font/iknowledgebase.woff?m4qrx6") format("woff"), url("/wp-content/themes/iknowledgebase/assets/font/iknowledgebase.ttf?m4qrx6") format("truetype"), url("/wp-content/themes/iknowledgebase/assets/font/iknowledgebase.svg?m4qrx6#iknowledgebase") format("svg");
+	src: url("https://RomanGryzodub.github.io/StatisticalProgrammer/wp-content/themes/iknowledgebase/assets/font/iknowledgebase.eot");
+	src: url("https://RomanGryzodub.github.io/StatisticalProgrammer/wp-content/themes/iknowledgebase/assets/font/iknowledgebase.eot?m4qrx6#iefix") format("embedded-opentype"), url("https://RomanGryzodub.github.io/StatisticalProgrammer/wp-content/themes/iknowledgebase/assets/font/iknowledgebase.woff2?m4qrx6") format("woff2"), url("https://RomanGryzodub.github.io/StatisticalProgrammer/wp-content/themes/iknowledgebase/assets/font/iknowledgebase.woff?m4qrx6") format("woff"), url("https://RomanGryzodub.github.io/StatisticalProgrammer/wp-content/themes/iknowledgebase/assets/font/iknowledgebase.ttf?m4qrx6") format("truetype"), url("https://RomanGryzodub.github.io/StatisticalProgrammer/wp-content/themes/iknowledgebase/assets/font/iknowledgebase.svg?m4qrx6#iknowledgebase") format("svg");
 	font-style: normal;
 	font-weight: 400;
 }

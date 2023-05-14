@@ -1,11 +1,11 @@
 @font-face {
   font-family: "kcicons";
-  src: url("/wp-content/themes/knowledgecenter/assets/icons/font/kcicons.eot");
-  src: url("/wp-content/themes/knowledgecenter/assets/icons/font/kcicons.eot?i88y63#iefix") format("embedded-opentype"),
-      url("/wp-content/themes/knowledgecenter/assets/icons/font/kcicons.woff2?i88y63") format("woff2"),
-      url("/wp-content/themes/knowledgecenter/assets/icons/font/kcicons.woff?i88y63") format("woff"),
-      url("/wp-content/themes/knowledgecenter/assets/icons/font/kcicons.ttf?i88y63") format("truetype"),
-      url("/wp-content/themes/knowledgecenter/assets/icons/font/kcicons.svg?i88y63#kcicons") format("svg");
+  src: url("https://RomanGryzodub.github.io/StatisticalProgrammer/wp-content/themes/knowledgecenter/assets/icons/font/kcicons.eot");
+  src: url("https://RomanGryzodub.github.io/StatisticalProgrammer/wp-content/themes/knowledgecenter/assets/icons/font/kcicons.eot?i88y63#iefix") format("embedded-opentype"),
+      url("https://RomanGryzodub.github.io/StatisticalProgrammer/wp-content/themes/knowledgecenter/assets/icons/font/kcicons.woff2?i88y63") format("woff2"),
+      url("https://RomanGryzodub.github.io/StatisticalProgrammer/wp-content/themes/knowledgecenter/assets/icons/font/kcicons.woff?i88y63") format("woff"),
+      url("https://RomanGryzodub.github.io/StatisticalProgrammer/wp-content/themes/knowledgecenter/assets/icons/font/kcicons.ttf?i88y63") format("truetype"),
+      url("https://RomanGryzodub.github.io/StatisticalProgrammer/wp-content/themes/knowledgecenter/assets/icons/font/kcicons.svg?i88y63#kcicons") format("svg");
   font-style: normal;
   font-weight: 400;
 }
